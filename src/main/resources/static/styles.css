@@ -1,0 +1,107 @@
+:root {
+  --ink: #1c2430;
+  --paper: #f3efe4;
+  --panel: #fffdf8;
+  --line: #d7d0c2;
+  --navy: #10243e;
+  --rust: #8d2f2f;
+  --green: #1f6b4a;
+  --amber: #8a5a12;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "Iowan Old Style", Palatino, Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; }
+
+header {
+  background: var(--navy);
+  color: #f4efe4;
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+header a { color: #f4efe4; }
+
+header p { margin: 0.2rem 0 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 0.9rem; }
+
+main { padding: 1.25rem 1.5rem 3rem; max-width: 1180px; }
+
+h1, h2 { font-weight: 600; }
+
+h1 { margin: 0; font-size: 1.6rem; }
+
+h2 { margin: 1.6rem 0 0.6rem; font-size: 1.2rem; }
+
+a { color: var(--navy); }
+
+table { width: 100%; border-collapse: collapse; background: var(--panel); }
+
+th, td {
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  padding: 0.55rem 0.6rem;
+  vertical-align: top;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.92rem;
+}
+
+th { font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; color: #5c564c; }
+
+.num, pre { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; }
+
+.bad { color: var(--rust); font-weight: 700; }
+
+.ok { color: var(--green); font-weight: 700; }
+
+.pending { color: var(--amber); font-weight: 700; }
+
+.banner {
+  background: #f3d6d2;
+  border: 1px solid #e0aaa4;
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+  margin: 0.8rem 0;
+}
+
+button, .button {
+  background: var(--navy);
+  color: #f4efe4;
+  border: 0;
+  padding: 0.45rem 0.75rem;
+  font: 600 0.9rem ui-sans-serif, system-ui, sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+label { display: block; margin: 0.7rem 0 0.25rem; font-family: ui-sans-serif, system-ui, sans-serif; }
+
+input, select, textarea {
+  width: min(100%, 36rem);
+  padding: 0.4rem;
+  font: 0.95rem ui-sans-serif, system-ui, sans-serif;
+  border: 1px solid var(--line);
+  background: white;
+}
+
+pre {
+  white-space: pre-wrap;
+  background: #f7f4ec;
+  padding: 0.6rem;
+  border: 1px solid var(--line);
+  font-size: 0.82rem;
+}
+
+.note { font-family: ui-sans-serif, system-ui, sans-serif; color: #3d4450; }

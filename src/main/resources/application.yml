@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: credit-sentinel
+  datasource:
+    url: jdbc:postgresql://localhost:5433/credit_sentinel
+    username: credit
+    password: credit
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+  thymeleaf:
+    cache: false
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-scripted-not-used}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4o-mini}
+          temperature: 0.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
+
+creditsentinel:
+  llm-mode: scripted
+  concentration-cap: "0.35"
+  max-model-turns: 6
+
+logging:
+  level:
+    com.creditsentinel: INFO

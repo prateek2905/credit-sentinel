@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>Audit</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Audit</h1>
+    <p>Every model turn, tool call, and citation check for a case.</p>
+  </div>
+  <nav><a href="/">Book</a></nav>
+</header>
+<main>
+  <p class="note" th:if="${caseId != null}" th:text="|Filtered to case ${caseId}|"></p>
+  <p class="note" th:if="${steps.empty}">No agent steps yet. Run an investigation from the book.</p>
+  <article class="panel" th:each="step : ${steps}">
+    <strong class="num" th:text="${step.caseId}"></strong>
+    <strong th:text="|${step.index} ${step.kind}|">0</strong>
+    <span th:if="${step.toolName != null}" th:text="${step.toolName}"></span>
+    <pre th:text="${step.payload}"></pre>
+  </article>
+</main>
+</body>
+</html>

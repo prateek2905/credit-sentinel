@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title th:text="|Case ${creditCase.borrowerName}|">Case</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1 th:text="${creditCase.borrowerName}">Borrower</h1>
+    <p th:text="|${creditCase.facilityType} · ${creditCase.sector} · ${creditCase.breachType}|">Facility</p>
+  </div>
+  <nav>
+    <a href="/">Book</a>
+    &nbsp;
+    <a th:href="@{/audit(caseId=${creditCase.id})}">Audit</a>
+  </nav>
+</header>
+<main>
+  <p class="banner" th:if="${error}" th:text="${error}"></p>
+  <section class="panel">
+    <p>Status <strong th:text="${creditCase.status}">PENDING</strong></p>
+    <p class="num">Committed limit <span th:text="${creditCase.committedLimit}">0</span>
+      · outstanding <span th:text="${creditCase.outstanding}">0</span></p>
+    <p th:if="${creditCase.alertDetail != null}" th:text="${creditCase.alertDetail}"></p>
+    <p class="bad" th:if="${creditCase.failureReason != null}" th:text="${creditCase.failureReason}"></p>
+  </section>
+
+  <h2>Agent trace</h2>
+  <p class="note" th:if="${creditCase.steps.empty}">This case has no agent steps. The seeded Pinnacle review was written by hand, not by the loop.</p>
+  <article class="panel" th:each="step : ${creditCase.steps}">
+    <strong th:text="|${step.index} ${step.kind}|">0 MODEL_TURN</strong>
+    <span th:if="${step.toolName != null}" th:text="${step.toolName}"></span>
+    <pre th:text="${step.payload}"></pre>
+  </article>
+
+  <h2>Credit memo</h2>
+  <section class="panel" th:if="${creditCase.memo != null}">
+    <p>Recommendation <strong th:text="${creditCase.memo.recommendation}">WATCH</strong>
+      · confidence <span th:text="${creditCase.memo.confidence}">MEDIUM</span></p>
+    <p th:text="${creditCase.memo.summary}"></p>
+    <h3>Cited facts</h3>
+    <table>
+      <thead><tr><th>Fact</th><th>Value</th><th>Tool</th></tr></thead>
+      <tbody>
+      <tr th:each="fact : ${creditCase.memo.citedFacts}">
+        <td th:text="${fact.name}"></td>
+        <td class="num" th:text="${fact.value}"></td>
+        <td th:text="${fact.sourceTool}"></td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Risk drivers</h3>
+    <ul><li th:each="driver : ${creditCase.memo.riskDrivers}" th:text="${driver}"></li></ul>
+    <h3>Missing data</h3>
+    <ul><li th:each="item : ${creditCase.memo.missingData}" th:text="${item}"></li></ul>
+    <p class="note">Drafting default: a limit breach recommends REDUCE_LIMIT. A DSCR miss of more than 10% of the minimum recommends ESCALATE. A smaller DSCR miss recommends WAIVE_WITH_CONDITIONS. A rating that crosses out of investment grade recommends ESCALATE. You can reject the draft.</p>
+  </section>
+  <p class="note" th:if="${creditCase.memo == null}">No memo yet.</p>
+
+  <h2>Human decision</h2>
+  <section class="panel" th:if="${creditCase.decision != null}">
+    <p><strong th:text="${creditCase.decision.decision}">APPROVE</strong>
+      by <span th:text="${creditCase.decision.analystId}">analyst</span>
+      at <span class="num" th:text="${creditCase.decision.decidedAt}"></span></p>
+    <p th:text="${creditCase.decision.comment}"></p>
+    <p class="note">The committed limit above is the number still stored on the facility.</p>
+  </section>
+  <form th:if="${creditCase.status == 'PENDING_APPROVAL'}"
+        th:action="@{|/cases/${creditCase.id}/decision|}"
+        th:object="${decisionForm}" method="post" class="panel">
+    <label for="analystId">Analyst id</label>
+    <input id="analystId" th:field="*{analystId}">
+    <label for="decision">Decision</label>
+    <select id="decision" th:field="*{decision}">
+      <option value="">Choose</option>
+      <option value="APPROVE">APPROVE</option>
+      <option value="REJECT">REJECT</option>
+    </select>
+    <label for="comment">Comment</label>
+    <textarea id="comment" rows="4" th:field="*{comment}"></textarea>
+    <p><button type="submit">Record decision</button></p>
+    <p class="note">This writes a decision row. It does not update the committed limit.</p>
+  </form>
+</main>
+</body>
+</html>

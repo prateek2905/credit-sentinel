@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>Credit Sentinel</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Credit Sentinel</h1>
+    <p>Breach detection is Java. The agent drafts. A person decides.</p>
+  </div>
+  <nav>
+    <a href="/">Book</a>
+    &nbsp;
+    <a href="/audit">Audit</a>
+  </nav>
+</header>
+<main>
+  <p class="banner" th:if="${error}" th:text="${error}"></p>
+
+  <h2>Open alerts</h2>
+  <p class="note" th:if="${desk.alerts.empty}">No open alerts. The detector did not find a limit, covenant, or rating-watch breach.</p>
+  <table th:if="${!desk.alerts.empty}">
+    <thead>
+    <tr><th>Borrower</th><th>Breach</th><th>Detail</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="alert : ${desk.alerts}">
+      <td th:text="${alert.borrowerName}"></td>
+      <td th:text="${alert.breachType}"></td>
+      <td th:text="${alert.detail}"></td>
+      <td th:text="${alert.status}"></td>
+      <td>
+        <form th:if="${alert.caseId == null or alert.caseStatus == 'FAILED'}"
+              th:action="@{|/alerts/${alert.alertId}/investigate|}" method="post">
+          <button type="submit" th:text="${alert.caseStatus == 'FAILED'} ? 'Retry investigation' : 'Run investigation'"></button>
+        </form>
+        <a th:if="${alert.caseId != null and alert.caseStatus != 'FAILED'}"
+           th:href="@{|/cases/${alert.caseId}|}">Open case</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <h2>Book</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Borrower</th><th>Sector</th><th>Rating</th><th>Facility</th>
+      <th>Limit</th><th>Outstanding</th><th>Utilization</th><th>Covenants</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="row : ${desk.facilities}">
+      <td th:text="${row.borrowerName}"></td>
+      <td th:text="${row.sector}"></td>
+      <td th:text="${row.rating}"></td>
+      <td th:text="${row.facilityType}"></td>
+      <td class="num" th:text="${row.committedLimit}"></td>
+      <td class="num" th:text="${row.outstanding}"></td>
+      <td class="num" th:classappend="${row.overLimit} ? 'bad' : 'ok'" th:text="${row.utilization}"></td>
+      <td th:classappend="${row.covenantBreach} ? 'bad' : ''" th:text="${row.covenantSummary}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <h2>Human decisions</h2>
+  <p class="note">Approving a memo records the analyst's decision. It does not change a committed limit.</p>
+  <table>
+    <thead>
+    <tr><th>Borrower</th><th>Analyst</th><th>Decision</th><th>Comment</th><th>When</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="decision : ${desk.decisions}">
+      <td><a th:href="@{|/cases/${decision.caseId}|}" th:text="${decision.borrowerName}"></a></td>
+      <td th:text="${decision.analystId}"></td>
+      <td th:text="${decision.decision}"></td>
+      <td th:text="${decision.comment}"></td>
+      <td class="num" th:text="${decision.decidedAt}"></td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>
